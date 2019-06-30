@@ -25,5 +25,5 @@
 		right: 0;
 		border: 2px solid white;
 		z-index: 10;
- 	}
+	}
  </style>
