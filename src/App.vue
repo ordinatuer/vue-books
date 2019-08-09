@@ -1,162 +1,145 @@
 <template>
   <div id="app">
     <div id="componentsWrap">
-      <SvgBox />
-      <div id="mapId" v-on:click="sayData"></div>
+      <TeilForm v-bind:teil="teilInForm" v-on:subsay="sayData" />
+      <div id="mapId"></div>
     </div>
   </div>
 </template>
 
 <script>
-import SvgBox from './components/SvgBox.vue'
+import TeilForm from './components/TeilForm.vue'
+
+import Draw from './components/Draw.js'
 
 export default {
-  name: 'app',
-  components: {
-    SvgBox
-  },
-  
-  data: function() {
-    return {
-      bounds: [[0, 0], [1000, 600]],
-      lines: [],
-      teils: []
-    }
-  },
-  mounted: function() {
-    let map = L.map('mapId')
-    
-    this.h = 1500
-    this.l = 1000
-    this.nL = 35
-    this.nH = 15
-    this.padding = 200
-    this.L = this.l * this.nL + (this.nL - 1) * this.padding
-    this.H = this.h * this.nH + (this.nH - 1) * this.padding
-    this.oX = this.L/2
-    this.oY = this.H/2
+	name: 'app',
+	components: {
+		TeilForm
+	},
+	mixins:[Draw],
+	data: function() {
+		return {
+			imgSrc: 'http://joo25.loc/img/',
+			h: 1500,
+			l: 1000,
+			nL: 65,
+			nH: 15,
+			padding: 200,
+			mapId: 'mapId',
+			canvasId: 'svgId',
+			api: {
+			line: {
+				url: 'http://joo25.loc/lines',
+				count: null,
+				current: 1,
+				data: 'lines'
+			}, 
+			teil: {
+				url: 'http://joo25.loc/teils',
+				count: null,
+				current: 1,
+				data: 'teils'
+			}
+			},
+			lines: [],
+			teils: [],
+			teilInForm: {}
+		}
+	},
+	mounted: function() {
+		this.map = L.map('mapId')
 
-    this.canvasID = 'svgID'
+		let h = document.documentElement.clientHeight,
+			l = document.documentElement.clientWidth
+		console.log([l, h])
 
-    this.svgBlock = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    this.svgBlock.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    this.svgBlock.setAttribute("viewBox", "0 0 " + this.L + " " + this.H);
-    this.svgBlock.setAttribute("id", this.canvasID);
+		this.map.fitBounds(this.bounds)
+		this.map.setMaxBounds(this.bounds)
+		this.map.setMinZoom(1)
+		this.map.setMaxZoom(5)
 
-    map.fitBounds(this.bounds)
-    map.setMaxBounds(this.bounds)
-    L.svgOverlay(this.svgBlock, this.bounds).addTo(map)
+		L.svgOverlay(
+			this.svgBlock,
+			this.bounds,
+			{
+				interactive: true
+			}
+		).addTo(this.map)
 
-    this.canvas = SVG(this.canvasID)
-    this.canvas.rect(this.L, this.H).fill('white')
+		this.canvas = SVG(this.canvasId)
+		this.canvas.rect(this.L, this.H)
+			.fill('white')
 
-    this.api = {
-        line: {
-          url: 'http://joo25.loc/lines',
-          count: null,
-          current: 1,
-          data: 'lines'
-        }, 
-        teil: {
-          url: 'http://joo25.loc/teils',
-          count: null,
-          current: 1,
-          data: 'teils'
-        }
-    }
+		this.getData(this.api.line)
+	},
+	methods: {
+		sayData: function(data) {
+			// console.log({
+			// 	t: this.teils,
+			// 	l: this.lines,
+			// 	zoom: this.map.getZoom()
+			// })
+			//console.log('Say what!')
+			console.log(this.teils[data].text)
+		},
+		getData: function(api) {
+			let sb = this
+			let page = api.current
 
-    this.getData(this.api.line)
-    this.getData(this.api.teil)
-  },
-  methods: {
-    sayData: function() {
-      console.log({
-        t: this.teils,
-        l: this.lines
-      })
-    },
-    _getLines: function (){
-      // let sb = this
+			sb.$http.get(api.url + '?page=' + api.current)
+			.then(response => {
+				if (null === api.count) {
+					api.count = +response.request.getResponseHeader("x-pagination-page-count")
+				}
+				api.current++
+				sb[api.data] = sb[api.data].concat(response.data)
+			})
+			.catch(error => {
+				console.log(error)
+			})
+		}
+	},
+	watch: {
+		lines: function() {
+			if ( this.api.line.current <= this.api.line.count || null === this.api.line.count ) {
+				this.getData(this.api.line)
+			} else {
+				//console.log('Lines load: ' + this.lines.length)
+				this.drawLines()
 
-      // this.$http.get(this.api.line)
-      //   .then(response => {
-      //     console.log([
-      //       response,
-      //       response.request.getResponseHeader("x-pagination-page-count"),
-      //       response.request.getResponseHeader("x-pagination-current-page")
-      //     ])
-      //     response.data.forEach(function(l) {
-      //       let line = [
-      //         sb.oX + l.lineFrom.x * (sb.l + sb.padding),
-      //         sb.oY + l.lineFrom.y * (sb.h + sb.padding),
-      //         sb.oX + l.lineTo.x * (sb.l + sb.padding),
-      //         sb.oY + l.lineTo.y * (sb.h + sb.padding)
-      //       ]
-      //       sb.canvas.line(line).stroke({width:20, color: 'black'})
-      //     })
-      //   })
-      //   .catch(error => {
-      //     console.log(error)
-      //   })
-    },
-    getData: function(api) {
-      let sb = this,
-        page = api.current
-
-      sb.$http.get(api.url + '?page=' + api.current)
-        .then(response => {
-          if (null === api.count) {
-            api.count = +response.request.getResponseHeader("x-pagination-page-count")
-          }
-          api.current += 1
-          sb[api.data] = sb[api.data].concat(response.data)
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    },
-    drawLines: function() {
-
-    }
-  },
-  watch: {
-    lines: function() {
-      if ( this.api.line.current <= this.api.line.count || null === this.api.line.count ) {
-        this.getData(this.api.line)
-      } else {
-        console.log('Lines load: ' + this.lines.length)
-      }
-    },
-    teils: function() {
-      if ( this.api.teil.current <= this.api.teil.count || null === this.api.teil.count ) {
-        this.getData(this.api.teil)
-      } else {
-        console.log('Teils load: ' + this.teils.length)
-      }
-    }
-  }
-
+				this.getData(this.api.teil)
+			}
+		},
+		teils: function() {
+			if ( this.api.teil.current <= this.api.teil.count || null === this.api.teil.count ) {
+				this.getData(this.api.teil)
+			} else {
+				//console.log('Teils load: ' + this.teils.length)
+				this.drawTeils()
+			}
+		}
+	}
 }
 </script>
 
 <style src="../node_modules/leaflet/dist/leaflet.css"></style>
 <style>
-
 html, body {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	margin: 0;
 }
 #app,
 #mapId,
 #componentsWrap
- {
-  width: 100%;
-  height: 100%;
-  background-color: deepskyblue;
+{
+	width: 100%;
+	height: 100%;
+	background-color: deepskyblue;
 }
 #mapId {
-  background-color: #999;
+	background-color: #999;
 }
 </style>

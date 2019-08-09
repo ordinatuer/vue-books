@@ -1,0 +1,158 @@
+export default {
+	mounted: function () {
+		this.L = this.l * this.nL + (this.nL - 1) * this.padding
+		this.H = this.h * this.nH + (this.nH - 1) * this.padding
+		this.bounds = [[0, 0], [this.L, this.H]]
+		this.oX = this.L/2
+		this.oY = this.H/2
+
+		this.svgBlock = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		this.svgBlock.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+		this.svgBlock.setAttribute("viewBox", "0 0 " + this.L + " " + this.H);
+		this.svgBlock.setAttribute("id", this.canvasId);
+
+		let _this = this
+		this.svgBlock.onclick = function(e) {
+			let el = e.target
+
+			// api data id (teil_id)
+			let id = el.getAttribute('data-mark')
+
+			// number in App.data.[lines/teils] 
+			let modelId = el.getAttribute('data-model-id')
+
+			// attribute id of svg tags
+			let domId = el.getAttribute('id')
+
+			if ( id && modelId ) {
+				console.log('Ok')
+				_this.teilInForm = _this.teils[modelId]
+
+				_this.teilInForm.domId = domId
+				_this.teilInForm.modelId = modelId
+			} else {
+				console.log('Не то! Не то')
+			}
+		}
+
+	},
+	methods: {
+		drawLines: function() {
+			this.lines.forEach(function( l ) {
+				let line = this.coords(l.lineFrom, l.lineTo)
+
+				this.canvas.line(line).stroke({width:20, color: "black"})
+			}, this)
+		},
+		drawTeils: function() {
+			this.teils.forEach(function( t, i ) {
+				let map = [],
+					type = (t.type) ? t.type : 1
+
+				map[1] = 'rect'
+				map[2] = 'circle'
+				map[3] = 'image'
+
+				if ( 1 === t.type || 2 === t.type || 3 === t.type ) {
+					(this[map[type]])( t, i )
+				}
+
+			}, this)
+		},
+		coords: function(p1, p2) {
+			let coords = []
+
+			if ( undefined !== p1 ) {
+				coords.push(this.oX + p1.x * (this.l + this.padding) )
+				coords.push(this.oY + p1.y * (this.h + this.padding) )
+			}
+			if ( undefined !== p2 ) {
+				coords.push(this.oX + p2.x * (this.l + this.padding) )
+				coords.push(this.oY + p2.y * (this.h + this.padding) )
+			}
+
+			return coords
+		},
+		rect: function(teil, i) {
+			let place,
+				l, h,
+				fill,
+				f
+
+			fill = (teil.fill) ? teil.fill : '#999'
+			place = this.coords(teil)
+
+			l = (1 === teil.l) ? this.l : this.h
+			h = (1 === teil.h) ? this.h : this.l
+
+			f = this.canvas.rect(l, h)
+
+			if ( teil.r ) {
+				f.radius(teil.r)
+			}
+			
+			f.fill(fill).center( place[0], place[1] )
+			f.attr({'data-mark': teil.teil_id})
+			f.attr({'data-model-id': i})
+			f.attr({'class': 'teil-rect'})
+
+			this.text( teil, place )
+
+		},
+		circle: function(teil, i) {
+			let place,
+				r, fill, f
+
+			place = this.coords(teil)
+			r = this.h
+			fill = (teil.fill) ? teil.fill : '#999'
+
+			f = this.canvas.circle(r)
+			f.fill(fill).center(place[0], place[1])
+			f.attr({'data-mark': teil.teil_id})
+			f.attr({'data-model-id': i})
+
+			this.text(teil, place)
+		},
+		image: function(teil) {
+			let place = this.coords(teil),
+				//image = teil.image,
+				ratio = 1,
+				dx = 0,
+				f
+
+			f = this.canvas
+				.image(this.imgSrc + teil.image)
+				.loaded(loader => {
+					ratio = loader.ratio
+					dx = Math.ceil( (1 - ratio) * this.l/2 )
+				})
+
+			f.size(this.l * ratio, this.h)
+			f.center(place[0] + dx, place[1])
+			f.attr({'data-mark': teil.teil_id})
+		},
+		text: function(teil, place) {
+			let srcText = teil.text.split('\n'),
+				nText = srcText.length,
+				text = '',
+				i = 0
+
+			text = this.canvas.text( function( str )  {
+				while (i < nText ) {
+					if ( 0 !== i ) {
+						str.tspan(srcText[i]).newLine()
+					} else {
+						str.tspan(srcText[i])
+					}
+					i++
+				}
+			})
+
+			text.font({
+				size: teil.size,
+				anchor: 'middle'
+			}).move(place[0], place[1]-100*i)
+		}
+	}
+}

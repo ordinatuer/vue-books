@@ -1,18 +1,23 @@
  <template>
  	<div id="teilForm">
- 		<input type="text" name="x" v-bind:value="header" /><br />
+ 		<input type="text" name="x" /><br />
  		<input type="text" name="y" /><br />
  		<input type="text" name="l" /><br />
  		<input type="text" name="h" /><br />
+ 		<span>{{api.length}}</span><br />
  	</div>
  </template>
 
  <script >
  	export default {
  		name: "SvgBox",
+ 		props: ['api'],
+ 		mounted: function() {
+ 			//console.log(this.api)
+ 		},
  		data: function() {
  			return {
- 				header: 'TeilFormBlock'
+ 				//header: 'TeilFormBlock'
  			}
  		}
  	}
