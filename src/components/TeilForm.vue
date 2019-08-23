@@ -34,13 +34,7 @@
 		methods: {
 			sayData: function() {
 				//console.log(this.teil.x + ' | ' + this.teil.text + ' | ' + this.teil.domId )
-				//console.log(this.teil)
-
-				let el = document.getElementById(this.teil.domId)
-				let x = +el.getAttribute("x") + 5000
-
-				el.setAttribute("x", x)
-				console.log()
+				console.log(this.teil)
 			},
 			newTeil: function() {
 				console.log('New!!')

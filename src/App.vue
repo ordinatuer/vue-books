@@ -1,46 +1,56 @@
 <template>
-  <div id="app">
-    <div id="componentsWrap">
-      <TeilForm v-bind:teil="teilInForm" v-on:subsay="sayData" />
-      <div id="mapId"></div>
-    </div>
-  </div>
+	<div id="app">
+		<div id="componentsWrap">
+			<TeilForm v-bind:teil="teilInForm" v-on:subsay="sayData" />
+			<div id="mapId"></div>
+			<svg :id="canvasId"
+				xmlns="http://www.w3.org/2000/svg"
+				:viewBox="'0 0 ' + L + ' ' + H"
+				v-on:click="testClick"
+			>
+				<rect v-bind:width="L" v-bind:height="H" fill="white" x="0" y="0"></rect>
+				<SvgLine v-for="line in lines" v-bind:line="line" />
+				<SvgTeil v-for="teil in teils" v-bind:teil="teil" v-if="1" />
+			</svg>
+		</div>
+	</div>
 </template>
 
 <script>
 import TeilForm from './components/TeilForm.vue'
+import SvgLine from './components/SvgLine.vue'
+import SvgTeil from './components/SvgTeil.vue'
 
-import Draw from './components/Draw.js'
+import Draw from './mixins/Draw.js'
 
 export default {
 	name: 'app',
 	components: {
-		TeilForm
+		TeilForm,
+		SvgLine,
+		SvgTeil
 	},
 	mixins:[Draw],
 	data: function() {
 		return {
 			imgSrc: 'http://joo25.loc/img/',
-			h: 1500,
-			l: 1000,
-			nL: 65,
-			nH: 15,
-			padding: 200,
 			mapId: 'mapId',
 			canvasId: 'svgId',
 			api: {
-			line: {
-				url: 'http://joo25.loc/lines',
-				count: null,
-				current: 1,
-				data: 'lines'
-			}, 
-			teil: {
-				url: 'http://joo25.loc/teils',
-				count: null,
-				current: 1,
-				data: 'teils'
-			}
+				line: {
+					url: 'http://joo25.loc/lines',
+					count: null,
+					current: 1,
+					data: 'lines',
+					load: false
+				}, 
+				teil: {
+					url: 'http://joo25.loc/teils',
+					count: null,
+					current: 1,
+					data: 'teils',
+					load: false
+				}
 			},
 			lines: [],
 			teils: [],
@@ -48,16 +58,18 @@ export default {
 		}
 	},
 	mounted: function() {
-		this.map = L.map('mapId')
+		this.bounds = [[0, 0], [this.L, this.H]]
 
-		let h = document.documentElement.clientHeight,
-			l = document.documentElement.clientWidth
-		console.log([l, h])
+		console.log( this.L + ' | ' + this.H)
+		
+		this.map = L.map('mapId')
 
 		this.map.fitBounds(this.bounds)
 		this.map.setMaxBounds(this.bounds)
 		this.map.setMinZoom(1)
 		this.map.setMaxZoom(5)
+
+		this.svgBlock = document.getElementById(this.canvasId)
 
 		L.svgOverlay(
 			this.svgBlock,
@@ -68,19 +80,11 @@ export default {
 		).addTo(this.map)
 
 		this.canvas = SVG(this.canvasId)
-		this.canvas.rect(this.L, this.H)
-			.fill('white')
 
 		this.getData(this.api.line)
 	},
 	methods: {
 		sayData: function(data) {
-			// console.log({
-			// 	t: this.teils,
-			// 	l: this.lines,
-			// 	zoom: this.map.getZoom()
-			// })
-			//console.log('Say what!')
 			console.log(this.teils[data].text)
 		},
 		getData: function(api) {
@@ -98,24 +102,70 @@ export default {
 			.catch(error => {
 				console.log(error)
 			})
+		},
+		testClick: function(e) {
+			let _this = this
+			let el = e.target
+
+			// api data id (teil_id)
+			let id = el.getAttribute('data-mark')
+
+			// number in App.data.[lines/teils] 
+			let modelId = el.getAttribute('data-model-id')
+
+			// attribute id of svg tags
+			let domId = el.getAttribute('id')
+
+			if ( id && modelId ) {
+				console.log('Ok')
+				_this.teilInForm = _this.teils[modelId]
+
+				_this.teilInForm.domId = domId
+				_this.teilInForm.modelId = modelId
+			} else {
+				//console.log('Не то! Не то')
+			}
+
+			let L = this.lines.pop()
+
+			L.lineFrom.x += 1
+			L.lineFrom.y += 1
+
+			L.lineTo.x += 1
+			L.lineTo.y += 1
+			
+			this.lines.push(L)
 		}
 	},
 	watch: {
 		lines: function() {
+			if ( this.api.line.load) {
+				//console.log('line already loaded')
+				return
+			}
+
 			if ( this.api.line.current <= this.api.line.count || null === this.api.line.count ) {
 				this.getData(this.api.line)
 			} else {
 				//console.log('Lines load: ' + this.lines.length)
-				this.drawLines()
+				//this.drawLines()
 
+				this.api.line.load = true
 				this.getData(this.api.teil)
 			}
+
+			//console.log('lines watch')
 		},
 		teils: function() {
+			if ( this.api.teil.load ) {
+				return
+			}
+
 			if ( this.api.teil.current <= this.api.teil.count || null === this.api.teil.count ) {
 				this.getData(this.api.teil)
 			} else {
 				//console.log('Teils load: ' + this.teils.length)
+				this.api.line.teil = true
 				this.drawTeils()
 			}
 		}

@@ -1,41 +1,41 @@
 export default {
 	mounted: function () {
-		this.L = this.l * this.nL + (this.nL - 1) * this.padding
-		this.H = this.h * this.nH + (this.nH - 1) * this.padding
-		this.bounds = [[0, 0], [this.L, this.H]]
-		this.oX = this.L/2
-		this.oY = this.H/2
 
-		this.svgBlock = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		this.svgBlock.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-		this.svgBlock.setAttribute("viewBox", "0 0 " + this.L + " " + this.H);
-		this.svgBlock.setAttribute("id", this.canvasId);
-
-		let _this = this
-		this.svgBlock.onclick = function(e) {
-			let el = e.target
-
-			// api data id (teil_id)
-			let id = el.getAttribute('data-mark')
-
-			// number in App.data.[lines/teils] 
-			let modelId = el.getAttribute('data-model-id')
-
-			// attribute id of svg tags
-			let domId = el.getAttribute('id')
-
-			if ( id && modelId ) {
-				console.log('Ok')
-				_this.teilInForm = _this.teils[modelId]
-
-				_this.teilInForm.domId = domId
-				_this.teilInForm.modelId = modelId
-			} else {
-				console.log('Не то! Не то')
-			}
-		}
-
+		//console.log('mix load')
 	},
+	data: function() {	
+		let data = {
+			h: 1500,
+			l: 1000,
+			nL: 65,
+			nH: 15,
+			padding: 200
+		}
+		let L = data.l * data.nL + (data.nL - 1) * data.padding
+		let H = data.h * data.nH + (data.nH - 1) * data.padding
+
+		data.L = L
+		data.H = H
+		
+		return data
+	},
+	// data: function() {	
+	// 	return {
+	// 		h: 1500,
+	// 		l: 1000,
+	// 		nL: 65,
+	// 		nH: 15,
+	// 		padding: 200
+	// 	}
+	// },
+	// computed: {
+	// 	L: function() {
+	// 		return this.l * this.nL + (this.nL - 1) * this.padding
+	// 	},
+	// 	H: function() {
+	// 		return this.h * this.nH + (this.nH - 1) * this.padding
+	// 	}
+	// },
 	methods: {
 		drawLines: function() {
 			this.lines.forEach(function( l ) {
@@ -61,14 +61,13 @@ export default {
 		},
 		coords: function(p1, p2) {
 			let coords = []
-
 			if ( undefined !== p1 ) {
-				coords.push(this.oX + p1.x * (this.l + this.padding) )
-				coords.push(this.oY + p1.y * (this.h + this.padding) )
+				coords.push(this.L/2 + p1.x * (this.l + this.padding) )
+				coords.push(this.H/2 + p1.y * (this.h + this.padding) )
 			}
 			if ( undefined !== p2 ) {
-				coords.push(this.oX + p2.x * (this.l + this.padding) )
-				coords.push(this.oY + p2.y * (this.h + this.padding) )
+				coords.push(this.L/2 + p2.x * (this.l + this.padding) )
+				coords.push(this.H/2 + p2.y * (this.h + this.padding) )
 			}
 
 			return coords
