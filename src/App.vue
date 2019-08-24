@@ -10,7 +10,7 @@
 			>
 				<rect v-bind:width="L" v-bind:height="H" fill="white" x="0" y="0"></rect>
 				<SvgLine v-for="line in lines" v-bind:line="line" />
-				<SvgTeil v-for="teil in teils" v-bind:teil="teil" v-if="1" />
+				<SvgTeil v-for="teil in teils" v-bind:teil="teil" />
 			</svg>
 		</div>
 	</div>
@@ -59,8 +59,6 @@ export default {
 	},
 	mounted: function() {
 		this.bounds = [[0, 0], [this.L, this.H]]
-
-		console.log( this.L + ' | ' + this.H)
 		
 		this.map = L.map('mapId')
 

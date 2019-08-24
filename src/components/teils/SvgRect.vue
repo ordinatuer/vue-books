@@ -1,14 +1,35 @@
 <template>
-	<circle class="custClass"
-		r="750" cx="9300" cy="950" 
-		fill="red" 
-		data-mark="26" data-model-id="25"
-	></circle>
+	<rect class="custRect"
+		v-bind:rx="teil.r"
+		v-bind:ry="teil.r"
+		v-bind:x="cxy[0]" v-bind:y="cxy[1]" 
+		v-bind:width="(-1===this.l)?l:h" v-bind:height="(-1===this.h)?h:l"
+		v-bind:fill="teil.fill || '#999'"
+		v-bind:data-model-id="teil.teil_id"
+	></rect>
 </template>
 
 <script >
+import Draw from '../../mixins/Draw.js'
+
 export default {
-	name: 'SvgRect'
+	name: 'SvgRect',
+	props: ['teil'],
+	mixins: [Draw],
+	data: function() {
+		return {
+
+		}
+	},
+	mounted: function() {
+		console.log( this.teil )
+
+	},
+	computed: {
+		cxy: function() {
+			return this.coords(this.teil)
+		}
+	}
 }
 </script>
 

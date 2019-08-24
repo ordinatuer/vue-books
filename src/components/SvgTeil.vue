@@ -1,5 +1,5 @@
 <template>
-	<SvgRect v-if="1 === teil.type" />
+	<SvgRect v-if="1 === teil.type" v-bind:teil="teil" />
 	<SvgCircle v-else-if="2 === teil.type" />
 	<SvgImage v-else-if="3 === teil.type" />
 </template>
@@ -9,7 +9,6 @@ import SvgRect from './teils/SvgRect.vue'
 import SvgCircle from './teils/SvgCircle.vue'
 import SvgImage from './teils/SvgImage.vue'
 
-console.log('SvgTeil mounted Outer')
 export default {
 	name: 'SvgTeil',
 	props: ['teil'],

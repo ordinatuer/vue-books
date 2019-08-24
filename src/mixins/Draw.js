@@ -37,13 +37,13 @@ export default {
 	// 	}
 	// },
 	methods: {
-		drawLines: function() {
-			this.lines.forEach(function( l ) {
-				let line = this.coords(l.lineFrom, l.lineTo)
+		// drawLines: function() {
+		// 	this.lines.forEach(function( l ) {
+		// 		let line = this.coords(l.lineFrom, l.lineTo)
 
-				this.canvas.line(line).stroke({width:20, color: "black"})
-			}, this)
-		},
+		// 		this.canvas.line(line).stroke({width:20, color: "black"})
+		// 	}, this)
+		// },
 		drawTeils: function() {
 			this.teils.forEach(function( t, i ) {
 				let map = [],

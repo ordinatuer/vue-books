@@ -22,7 +22,7 @@ export default {
 		}
 	},
 	mounted: function() {
-		//console.log(this.line.lineFrom.x)
+		//console.log()
 	},
 	computed: {
 		cxy: function() {
