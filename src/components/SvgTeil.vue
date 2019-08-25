@@ -17,11 +17,6 @@ export default {
 		SvgCircle,
 		SvgImage
 	},
-	data: function() {
-		return {
-
-		}
-	},
 	mounted: function() {
 		//console.log('SvgTeil mounted ' + this.teil.type)
 	}

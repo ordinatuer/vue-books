@@ -16,11 +16,6 @@ export default {
 	name: 'SvgRect',
 	props: ['teil'],
 	mixins: [Draw],
-	data: function() {
-		return {
-
-		}
-	},
 	mounted: function() {
 		console.log( this.teil )
 
