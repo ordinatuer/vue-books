@@ -1,7 +1,7 @@
 <template>
 	<SvgRect v-if="1 === teil.type" v-bind:teil="teil" />
-	<SvgCircle v-else-if="2 === teil.type" />
-	<SvgImage v-else-if="3 === teil.type" />
+	<SvgCircle v-else-if="2 === teil.type" v-bind:teil="teil" />
+	<SvgImage v-else-if="3 === teil.type" v-bind:teil="teil" />
 </template>
 
 <script>
@@ -23,4 +23,10 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.svg-teil:hover {
+	stroke: black;
+	stroke-width: 20px;
+
+}
+</style>

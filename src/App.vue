@@ -10,7 +10,7 @@
 			>
 				<rect v-bind:width="L" v-bind:height="H" fill="white" x="0" y="0"></rect>
 				<SvgLine v-for="line in lines" v-bind:line="line" />
-				<SvgTeil v-for="teil in teils" v-bind:teil="teil" />
+				<SvgTeil v-for="(teil, i) in teils" v-bind:teil="numTeil(teil, i)" />
 			</svg>
 		</div>
 	</div>
@@ -33,7 +33,6 @@ export default {
 	mixins:[Draw],
 	data: function() {
 		return {
-			imgSrc: 'http://joo25.loc/img/',
 			mapId: 'mapId',
 			canvasId: 'svgId',
 			api: {
@@ -65,25 +64,32 @@ export default {
 		this.map.fitBounds(this.bounds)
 		this.map.setMaxBounds(this.bounds)
 		this.map.setMinZoom(1)
-		this.map.setMaxZoom(5)
+		this.map.setMaxZoom(7)
 
-		this.svgBlock = document.getElementById(this.canvasId)
+		let canvas = document.getElementById(this.canvasId)
 
 		L.svgOverlay(
-			this.svgBlock,
+			canvas,
+			//this.svgBlock,
 			this.bounds,
 			{
 				interactive: true
 			}
 		).addTo(this.map)
 
-		this.canvas = SVG(this.canvasId)
-
 		this.getData(this.api.line)
 	},
 	methods: {
-		sayData: function(data) {
-			console.log(this.teils[data].text)
+		numTeil: function(teil, i) {
+			teil.i = i
+			return teil
+		},
+		sayData: function(data) { ///////////////////////
+			if (data) {
+				console.log(this.teils[data].text)
+			} else {
+				console.log('Empty - Пусто')
+			}
 		},
 		getData: function(api) {
 			let sb = this
@@ -101,24 +107,24 @@ export default {
 				console.log(error)
 			})
 		},
-		testClick: function(e) {
+		testClick: function(e) { //////////////////////////////
 			let _this = this
 			let el = e.target
 
 			// api data id (teil_id)
-			let id = el.getAttribute('data-mark')
+			let id = el.getAttribute('data-api-id')
 
 			// number in App.data.[lines/teils] 
 			let modelId = el.getAttribute('data-model-id')
 
 			// attribute id of svg tags
-			let domId = el.getAttribute('id')
+			//let domId = el.getAttribute('id')
 
 			if ( id && modelId ) {
 				console.log('Ok')
 				_this.teilInForm = _this.teils[modelId]
 
-				_this.teilInForm.domId = domId
+				//_this.teilInForm.domId = domId
 				_this.teilInForm.modelId = modelId
 			} else {
 				//console.log('Не то! Не то')
@@ -146,7 +152,6 @@ export default {
 				this.getData(this.api.line)
 			} else {
 				//console.log('Lines load: ' + this.lines.length)
-				//this.drawLines()
 
 				this.api.line.load = true
 				this.getData(this.api.teil)
@@ -164,7 +169,6 @@ export default {
 			} else {
 				//console.log('Teils load: ' + this.teils.length)
 				this.api.line.teil = true
-				this.drawTeils()
 			}
 		}
 	}
@@ -189,5 +193,8 @@ html, body {
 }
 #mapId {
 	background-color: #999;
+}
+.svg-text {
+	font-size: 150;
 }
 </style>
