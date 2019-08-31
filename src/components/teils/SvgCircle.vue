@@ -7,6 +7,7 @@
 			v-bind:fill="teil.fill || '#999'" 
 			v-bind:data-model-id="teil.i"
 			v-bind:data-api-id="teil.teil_id"
+			v-bind:data-type="teil.type"
 		>
 		</circle>
 		<SvgTeilText 

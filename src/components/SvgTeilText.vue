@@ -2,7 +2,7 @@
 	<text class="svg-text"
 		text-anchor="middle"
 		v-bind:x="cxy[0]"
-		v-bind:y="cxy[1]+teil.size-(textStrings.length/2)*this.lineHeight"
+		v-bind:y="y"
 		v-bind:font-size="teil.size">
 		<tspan v-for="(str, i) in textStrings" 
 			v-bind:x="cxy[0]"
@@ -23,6 +23,10 @@ export default {
 		},
 		lineHeight: function() {
 			return this.teil.size
+		},
+		y: function() {
+			let y = this.cxy[1]+this.teil.size-(this.textStrings.length/2)*this.lineHeight 
+			return y
 		}
 	}
 }

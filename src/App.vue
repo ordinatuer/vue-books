@@ -1,7 +1,7 @@
 <template>
 	<div id="app">
 		<div id="componentsWrap">
-			<TeilForm v-bind:teil="teilInForm" v-on:subsay="sayData" />
+			<TeilForm v-bind:teil="teilInForm" v-on:addTeil="sayData" />
 			<div id="mapId"></div>
 			<svg :id="canvasId"
 				xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +70,6 @@ export default {
 
 		L.svgOverlay(
 			canvas,
-			//this.svgBlock,
 			this.bounds,
 			{
 				interactive: true
@@ -86,10 +85,19 @@ export default {
 		},
 		sayData: function(data) { ///////////////////////
 			if (data) {
-				console.log(this.teils[data].text)
+				console.log('Work hier')
+				//console.log(this.teils[data])
+
+				this.teils.push(data)
+
+				window.T = this.teils
+
 			} else {
 				console.log('Empty - Пусто')
 			}
+		},
+		addNewTeil: function() {
+
 		},
 		getData: function(api) {
 			let sb = this
@@ -120,25 +128,28 @@ export default {
 			// attribute id of svg tags
 			//let domId = el.getAttribute('id')
 
-			if ( id && modelId ) {
-				console.log('Ok')
+			if ( modelId ) {
+				console.log( id + ' | ' + modelId)
 				_this.teilInForm = _this.teils[modelId]
 
-				//_this.teilInForm.domId = domId
 				_this.teilInForm.modelId = modelId
+
+				console.log(_this.teilInForm)
+
+
 			} else {
 				//console.log('Не то! Не то')
 			}
 
-			let L = this.lines.pop()
+			// let L = this.lines.pop()
 
-			L.lineFrom.x += 1
-			L.lineFrom.y += 1
+			// L.lineFrom.x += 1
+			// L.lineFrom.y += 1
 
-			L.lineTo.x += 1
-			L.lineTo.y += 1
+			// L.lineTo.x += 1
+			// L.lineTo.y += 1
 			
-			this.lines.push(L)
+			// this.lines.push(L)
 		}
 	},
 	watch: {
@@ -160,6 +171,7 @@ export default {
 			//console.log('lines watch')
 		},
 		teils: function() {
+			console.log( 'teils watch' )
 			if ( this.api.teil.load ) {
 				return
 			}

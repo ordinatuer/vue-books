@@ -6,7 +6,9 @@
 		v-bind:x="cxy[0] - l/2" 
 		v-bind:y="cxy[1] - h/2" 
 		v-bind:data-model-id="teil.i"
-		v-bind:data-api-id="teil.teil_id">
+		v-bind:data-api-id="teil.teil_id"
+		v-bind:data-type="teil.type"
+	>
 	</image>
 </template>
 

@@ -9,7 +9,9 @@
 			v-bind:fill="teil.fill || '#999'"
 			v-bind:data-model-id="teil.i"
 			v-bind:data-api-id="teil.teil_id"
-		></rect>
+			v-bind:data-type="teil.type"
+		>
+		</rect>
 		<SvgTeilText 
 			v-bind:teil="teil"
 			v-bind:cxy="cxy"
@@ -36,10 +38,10 @@ export default {
 			return this.coords(this.teil)
 		},
 		width: function () {
-			return (-1 === this.teil.l) ? this.h : this.l
+			return (-1 === +this.teil.l) ? this.h : this.l
 		},
 		height: function() {
-			return (-1 === this.teil.h) ? this.l : this.h 
+			return (-1 === +this.teil.h) ? this.l : this.h 
 		},
 		x: function() {
 			return this.cxy[0] - this.width/2
