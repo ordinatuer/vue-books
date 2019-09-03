@@ -30,7 +30,7 @@
 				<textarea name="text" v-model="newTeilData.text"></textarea><br />
 			</div>
 		</form>
- 	</div>
+	</div>
 </template>
 <script>
 	export default {
@@ -52,6 +52,7 @@
 					type: 1,
 					size: 150,
 					r: 60,
+					fill: '#999',
 					teil_id: 0,
 					modelId: null,
 					text: 'New Teil',
@@ -62,8 +63,7 @@
 			}
 		},
 		mounted: function() {
-			//this.newTeilData = this.defaultTeil
-			//this.newTeilData = Object.assign({}, this.defaultTeil)
+
 		},
 		methods: {
 			newTeil: function() {

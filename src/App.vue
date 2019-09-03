@@ -20,6 +20,7 @@
 import TeilForm from './components/TeilForm.vue'
 import SvgLine from './components/SvgLine.vue'
 import SvgTeil from './components/SvgTeil.vue'
+const qs = require('querystring')
 
 import Draw from './mixins/Draw.js'
 
@@ -83,14 +84,36 @@ export default {
 			teil.i = i
 			return teil
 		},
-		sayData: function(data) { ///////////////////////
-			if (data) {
-				console.log('Work hier')
-				//console.log(this.teils[data])
+		sayData: function(newData) { /////////////////
+			if (newData) {
+				console.log(newData)
 
-				this.teils.push(data)
+				this.teils.push(newData)
 
-				window.T = this.teils
+				let data = qs.stringify(newData)
+				//console.log(data)
+
+				this.$http({
+					method: 'post',
+					//url: 'http://localhost/',
+					url: this.api.teil.url,
+					data: data,
+					headers: {
+						'Content-type': 'application/x-www-form-urlencoded'
+						//'Content-type': 'multipart/form-data'
+						//'Content-type': 'text/plain'
+					}
+				})
+				.then(response => {
+					//console.log(response)
+				})
+				.catch(error => {
+					console.log(error)
+				})
+
+			
+
+				//window.T = this.teils
 
 			} else {
 				console.log('Empty - Пусто')
@@ -129,18 +152,16 @@ export default {
 			//let domId = el.getAttribute('id')
 
 			if ( modelId ) {
-				console.log( id + ' | ' + modelId)
+				//console.log( id + ' | ' + modelId)
 				_this.teilInForm = _this.teils[modelId]
 
 				_this.teilInForm.modelId = modelId
 
-				console.log(_this.teilInForm)
-
-
+				//console.log(_this.teilInForm)
+				
 			} else {
 				//console.log('Не то! Не то')
 			}
-
 			// let L = this.lines.pop()
 
 			// L.lineFrom.x += 1
