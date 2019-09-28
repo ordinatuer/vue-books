@@ -16,14 +16,7 @@ export default {
 	name: 'SvgLine',
 	props: ['line'],
 	mixins: [Draw],
-	data: function() {
-		return {
 
-		}
-	},
-	mounted: function() {
-		//console.log()
-	},
 	computed: {
 		cxy: function() {
 			let coords = this.coords(this.line.lineFrom, this.line.lineTo)

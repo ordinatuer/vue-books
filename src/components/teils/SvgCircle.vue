@@ -1,7 +1,7 @@
 <template>
 	<g>
 		<circle class="svg-teil"
-			v-bind:r="((1 === teil.r) ? h : l)/2" 
+			v-bind:r="h/2"
 			v-bind:cx="cxy[0]" 
 			v-bind:cy="cxy[1]" 
 			v-bind:fill="teil.fill || '#999'" 
@@ -18,6 +18,7 @@
 </template>
 
 <script >
+// v-bind:r="((1 === teil.r) ? h : l)/2"
 import Draw from '../../mixins/Draw.js'
 import SvgTeilText from '../SvgTeilText.vue'
 

@@ -22,7 +22,7 @@ export default {
 			return strings
 		},
 		lineHeight: function() {
-			return this.teil.size
+			return this.teil.size * 1.4
 		},
 		y: function() {
 			let y = this.cxy[1]+this.teil.size-(this.textStrings.length/2)*this.lineHeight 

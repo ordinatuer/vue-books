@@ -26,7 +26,7 @@ export default {
 			h: 1500,
 			l: 1000,
 			nL: 65,
-			nH: 15,
+			nH: 30,
 			padding: 200
 		}
 	},

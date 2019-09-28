@@ -1,7 +1,9 @@
 <template>
 	<div id="app">
 		<div id="componentsWrap">
-			<TeilForm v-bind:teil="teilInForm" v-on:addTeil="sayData" />
+			<TeilForm v-bind:teil="teilInForm"
+				v-on:addTeil="addTeil"
+				v-on:fixTeil="fixTeil"/>
 			<div id="mapId"></div>
 			<svg :id="canvasId"
 				xmlns="http://www.w3.org/2000/svg"
@@ -84,14 +86,11 @@ export default {
 			teil.i = i
 			return teil
 		},
-		sayData: function(newData) { /////////////////
+		addTeil: function(newData, formData) { /////////////////
 			if (newData) {
-				console.log(newData)
-
 				this.teils.push(newData)
 
-				let data = qs.stringify(newData)
-				//console.log(data)
+				let data = formData
 
 				this.$http({
 					method: 'post',
@@ -99,9 +98,8 @@ export default {
 					url: this.api.teil.url,
 					data: data,
 					headers: {
-						'Content-type': 'application/x-www-form-urlencoded'
-						//'Content-type': 'multipart/form-data'
-						//'Content-type': 'text/plain'
+						//'Content-type': 'application/x-www-form-urlencoded'
+						'Content-type': 'multipart/form-data'
 					}
 				})
 				.then(response => {
@@ -110,13 +108,31 @@ export default {
 				.catch(error => {
 					console.log(error)
 				})
-
-			
-
-				//window.T = this.teils
-
 			} else {
 				console.log('Empty - Пусто')
+			}
+		},
+		fixTeil: function(id, newData) {
+			if(id) {
+				let i = this.teils[id].teil_id
+
+
+				this.$http({
+					method: 'PATCH',
+					url: this.api.teil.url + '/' + i,
+					data: qs.stringify(newData),
+					headers: {
+						'Content-type': 'application/x-www-form-urlencoded'
+					}
+				})
+				.then(response => {
+					console.log(response)
+				})
+				.catch(error => {
+					console.log(error)
+				})
+			} else {
+				console.log('Empty - Пусто | fixData')
 			}
 		},
 		addNewTeil: function() {

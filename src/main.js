@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
 import 'leaflet'
-//import 'svg.js'
 import axios from 'axios'
 Vue.prototype.$http = axios
 

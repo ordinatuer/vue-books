@@ -4,11 +4,8 @@
 			<div class="form-inputs">
 				<input type="number" name="x" v-model="teil.x" /><br />
 				<input type="number" name="y" v-model="teil.y" /><br />
-				<input type="number" name="l" v-model="teil.l" /><br />
-				<input type="number" name="h" v-model="teil.h" /><br />
-				<!-- <input type="number" name="type" v-model="teil.type" /><br /> -->
 				<input type="hidden" name="modelId" v-bind:value="teil.modelId" />
-				<input type="hidden" name="teil_id" v-bind:value="teil.teil_id" />
+				<input type="number" name="teil_id" v-bind:value="teil.teil_id" disabled="true" />
 				<textarea name="text" v-model="teil.text"></textarea><br />
 			</div>
 		</form>
@@ -16,17 +13,22 @@
 			<div id="newButton" v-on:click="toggleForm" >
 				<p>{{newButtonText}}</p>
 			</div>
+			<div v-if="!this.formStatus" v-on:click="fixTeil">
+				<p>Save</p>
+			</div>
 			<div v-if="this.formStatus" v-on:click="newTeil">
 				<p>Emit</p>
 			</div>
 		</div>
-		<form id="teilFormNew" v-if="this.formStatus">
+		<form v-bind:id="newForm" v-if="this.formStatus">
 			<div class="form-inputs">
 				<input type="number" name="x" v-model="newTeilData.x" /><br />
 				<input type="number" name="y" v-model="newTeilData.y" /><br />
-				<input type="number" name="l" v-model="newTeilData.l" /><br />
-				<input type="number" name="h" v-model="newTeilData.h" /><br />
-				<input type="number" name="type" v-model="newTeilData.type" /><br />
+				<input type="radio" name="type" value="1" v-model="newTeilData.type" /><label>Rectangle</label><br/>
+				<input type="radio" name="type" value="2" v-model="newTeilData.type" /><label>Circle</label><br/>
+				<input type="radio" name="type" value="3" v-model="newTeilData.type" /><label>Image</label><br/>
+				<input type="text" name="image" v-bind:value="imageName" disabled /><br />
+				<input v-bind:id="newFormImage" type="file" name="imagefile" v-on:input="imageLoad" />
 				<textarea name="text" v-model="newTeilData.text"></textarea><br />
 			</div>
 		</form>
@@ -34,16 +36,13 @@
 </template>
 <script>
 	export default {
-		name: "TeilForm",
-		props: ["teil"],
+		name: 'TeilForm',
+		props: ['teil'],
 		data: function() {
 			return {
-				//newButtonText: "Add new Teil",
 				formStatus: false, // true - new teil; 
-				txt: {
-					newButton: "Add new Teil +",
-					saveButton: "Save New Teil +"
-				},
+				newForm: 'teilFormNew',
+				newFormImage: 'imageFile',
 				defaultTeil: {
 					x: 0,
 					y: 0,
@@ -56,10 +55,12 @@
 					teil_id: 0,
 					modelId: null,
 					text: 'New Teil',
+					image: null,
 					i: 0
 				},
 				newTeilData: {},
-				lastNewI: null
+				lastNewI: null,
+				imageName: null
 			}
 		},
 		mounted: function() {
@@ -67,14 +68,30 @@
 		},
 		methods: {
 			newTeil: function() {
-				this.$emit('addTeil', this.newTeilData)
+				let formData = new FormData(document.getElementById(this.newForm))
+				let imageData = document.getElementById(this.newFormImage)
+
+				formData.append('image', this.imageName)
+				//console.log(formData)
+				//window.D = formData
+
+				this.$emit('addTeil', this.newTeilData, formData)
 
 				this.newTeilData = Object.assign({}, this.defaultTeil)
-			},
-			sayData: function(e) {
-				// e.preventDefault()
-				// let form = document.getElementById('teilForm')
+
 				
+			},
+			fixTeil: function() {
+				let formData = new FormData(document.getElementById('teilForm'))
+				let data = {}
+
+				data.text = formData.get('text')
+				data.x = formData.get('x')
+				data.y = formData.get('y')
+
+				let id = formData.get('modelId')
+
+				this.$emit('fixTeil', id, data)
 			},
 			toggleForm: function() {
 				console.log('New!! ')
@@ -84,12 +101,26 @@
 				this.formStatus = !this.formStatus
 
 
+			},
+			imageLoad: function(e) {
+				let name = e.target.value.split('\\').pop() || null
+
+				this.imageName = name
+				this.newTeilData.image = name
+
+				//console.log( name )
+			}
+		},
+		watch: {
+			teil: function() {
+				console.log(this.teil.i + ' | ' + this.teil.teil_id)
 			}
 		},
 		computed: {
 			newButtonText: function () {
 				return ( this.formStatus) ? ' Fix ' : 'Add'
 			}
+
 		}
 	}
 </script>
