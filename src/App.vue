@@ -23,6 +23,7 @@ import TeilForm from './components/TeilForm.vue'
 import SvgLine from './components/SvgLine.vue'
 import SvgTeil from './components/SvgTeil.vue'
 const qs = require('querystring')
+const apiServer = 'http://45.8.228.95'
 
 import Draw from './mixins/Draw.js'
 
@@ -40,14 +41,14 @@ export default {
 			canvasId: 'svgId',
 			api: {
 				line: {
-					url: 'http://joo25.loc/lines',
+					url: apiServer + '/lines',
 					count: null,
 					current: 1,
 					data: 'lines',
 					load: false
 				}, 
 				teil: {
-					url: 'http://joo25.loc/teils',
+					url: apiServer + '/teils',
 					count: null,
 					current: 1,
 					data: 'teils',
@@ -86,7 +87,7 @@ export default {
 			teil.i = i
 			return teil
 		},
-		addTeil: function(newData, formData) { /////////////////
+		addTeil: function(newData, formData) {
 			if (newData) {
 				this.teils.push(newData)
 
@@ -94,11 +95,9 @@ export default {
 
 				this.$http({
 					method: 'post',
-					//url: 'http://localhost/',
 					url: this.api.teil.url,
 					data: data,
 					headers: {
-						//'Content-type': 'application/x-www-form-urlencoded'
 						'Content-type': 'multipart/form-data'
 					}
 				})
@@ -106,10 +105,10 @@ export default {
 					//console.log(response)
 				})
 				.catch(error => {
-					console.log(error)
+					//console.log(error)
 				})
 			} else {
-				console.log('Empty - Пусто')
+				//console.log('Empty - Пусто')
 			}
 		},
 		fixTeil: function(id, newData) {
@@ -151,10 +150,10 @@ export default {
 				sb[api.data] = sb[api.data].concat(response.data)
 			})
 			.catch(error => {
-				console.log(error)
+				//console.log(error)
 			})
 		},
-		testClick: function(e) { //////////////////////////////
+		testClick: function(e) {
 			let _this = this
 			let el = e.target
 
@@ -168,44 +167,26 @@ export default {
 			//let domId = el.getAttribute('id')
 
 			if ( modelId ) {
-				//console.log( id + ' | ' + modelId)
 				_this.teilInForm = _this.teils[modelId]
 
 				_this.teilInForm.modelId = modelId
-
-				//console.log(_this.teilInForm)
-				
 			} else {
-				//console.log('Не то! Не то')
+
 			}
-			// let L = this.lines.pop()
-
-			// L.lineFrom.x += 1
-			// L.lineFrom.y += 1
-
-			// L.lineTo.x += 1
-			// L.lineTo.y += 1
-			
-			// this.lines.push(L)
 		}
 	},
 	watch: {
 		lines: function() {
 			if ( this.api.line.load) {
-				//console.log('line already loaded')
 				return
 			}
 
 			if ( this.api.line.current <= this.api.line.count || null === this.api.line.count ) {
 				this.getData(this.api.line)
 			} else {
-				//console.log('Lines load: ' + this.lines.length)
-
 				this.api.line.load = true
 				this.getData(this.api.teil)
 			}
-
-			//console.log('lines watch')
 		},
 		teils: function() {
 			console.log( 'teils watch' )
@@ -216,7 +197,6 @@ export default {
 			if ( this.api.teil.current <= this.api.teil.count || null === this.api.teil.count ) {
 				this.getData(this.api.teil)
 			} else {
-				//console.log('Teils load: ' + this.teils.length)
 				this.api.line.teil = true
 			}
 		}

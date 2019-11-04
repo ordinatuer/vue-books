@@ -1,37 +1,53 @@
 <template>
-	<div>
-		<form id="teilForm" v-if="!this.formStatus">
-			<div class="form-inputs">
-				<input type="number" name="x" v-model="teil.x" /><br />
-				<input type="number" name="y" v-model="teil.y" /><br />
-				<input type="hidden" name="modelId" v-bind:value="teil.modelId" />
-				<input type="number" name="teil_id" v-bind:value="teil.teil_id" disabled="true" />
-				<textarea name="text" v-model="teil.text"></textarea><br />
-			</div>
-		</form>
-		<div class="form-controls">
-			<div id="newButton" v-on:click="toggleForm" >
-				<p>{{newButtonText}}</p>
-			</div>
-			<div v-if="!this.formStatus" v-on:click="fixTeil">
-				<p>Save</p>
-			</div>
-			<div v-if="this.formStatus" v-on:click="newTeil">
-				<p>Emit</p>
-			</div>
+	<div class="form-block">
+		<b-button variant="outline-primary"
+			class="w100"
+			v-on:click="toggleForm" >
+			{{newButtonText}}
+		</b-button>
+		<div v-if="!this.formStatus">
+			<b-form id="teilForm">
+				<b-form-input type="number" name="x" v-model="teil.x"></b-form-input>
+				<b-form-input type="number" name="y" v-model="teil.y"></b-form-input>
+				<b-form-input type="number" name="modelId" v-bind:value="teil.modelId"></b-form-input>
+				<b-form-input type="number" name="teil_id" v-bind:value="teil.teil_id" disabled></b-form-input>
+				<b-form-textarea name="text" v-model="teil.text"></b-form-textarea>
+			</b-form>
+			<!-- </form> -->
+			<b-button variant="success" class="w100"
+				v-on:click="fixTeil">
+				Save
+			</b-button>
 		</div>
-		<form v-bind:id="newForm" v-if="this.formStatus">
-			<div class="form-inputs">
-				<input type="number" name="x" v-model="newTeilData.x" /><br />
-				<input type="number" name="y" v-model="newTeilData.y" /><br />
-				<input type="radio" name="type" value="1" v-model="newTeilData.type" /><label>Rectangle</label><br/>
-				<input type="radio" name="type" value="2" v-model="newTeilData.type" /><label>Circle</label><br/>
-				<input type="radio" name="type" value="3" v-model="newTeilData.type" /><label>Image</label><br/>
-				<input type="text" name="image" v-bind:value="imageName" disabled /><br />
-				<input v-bind:id="newFormImage" type="file" name="imagefile" v-on:input="imageLoad" />
-				<textarea name="text" v-model="newTeilData.text"></textarea><br />
-			</div>
-		</form>
+
+		<div v-if="this.formStatus" class="new-form-block">
+			<b-form v-bind:id="newForm">
+				<b-form-input name="x" type="number" v-model="newTeilData.x"></b-form-input>
+				<b-form-input name="y" type="number" v-model="newTeilData.y"></b-form-input>
+				<b-form-radio name="type" value="1" v-model="newTeilData.type">Rectangle</b-form-radio>
+				<b-form-radio name="type" value="2" v-model="newTeilData.type">Circle</b-form-radio>
+				<b-form-radio name="type" value="3" v-model="newTeilData.type">Image</b-form-radio>
+				<b-form-input name="image"  v-bind:value="imageName"></b-form-input>
+				<b-form-file name="imagefile" v-bind:id="newFormImage" v-on:input="imageLoad"></b-form-file>
+				<b-form-textarea name="text" v-model="newTeilData.text"></b-form-textarea>
+			</b-form>
+			<!-- <form  v-bind:id="newForm">
+				<div class="form-inputs">
+					<input type="number" name="x" v-model="newTeilData.x" /><br />
+					<input type="number" name="y" v-model="newTeilData.y" /><br />
+					<input type="radio" name="type" value="1" v-model="newTeilData.type" /><label>Rectangle</label><br/>
+					<input type="radio" name="type" value="2" v-model="newTeilData.type" /><label>Circle</label><br/>
+					<input type="radio" name="type" value="3" v-model="newTeilData.type" /><label>Image</label><br/>
+					<input type="text" name="image" v-bind:value="imageName" disabled /><br />
+					<input type="file" v-bind:id="newFormImage" name="imagefile" v-on:input="imageLoad" />
+					<textarea name="text" v-model="newTeilData.text"></textarea><br />
+				</div>
+			</form> -->
+			<b-button variant="success" class="w100"
+				v-on:click="newTeil">
+				Emit
+			</b-button>
+		</div>
 	</div>
 </template>
 <script>
@@ -89,9 +105,12 @@
 				data.x = formData.get('x')
 				data.y = formData.get('y')
 
-				let id = formData.get('modelId')
+				let mid = formData.get('modelId')
 
-				this.$emit('fixTeil', id, data)
+				console.log( mid )
+				console.log( data )
+
+				this.$emit('fixTeil', mid, data)
 			},
 			toggleForm: function() {
 				console.log('New!! ')
@@ -103,12 +122,13 @@
 
 			},
 			imageLoad: function(e) {
-				let name = e.target.value.split('\\').pop() || null
+				//let name = e.target.value.split('\\').pop() || null
+				let name = e.name || null
 
 				this.imageName = name
 				this.newTeilData.image = name
 
-				//console.log( name )
+				console.log( name )
 			}
 		},
 		watch: {
@@ -125,38 +145,13 @@
 	}
 </script>
 <style >
-	#teilForm,
-	#teilFormNew {
+	.form-block {
 		position: absolute;
-		top: 0;
-		right: 0;
-		border: 2px solid white;
+		top: 0px;
+		right: 50px;
 		z-index: 401;
-		width: 170px;
 	}
-	#teilFormNew {
-		left: 50px;
-	}
-	#teilForm button {
+	.w100 {
 		width: 100%;
-		height: 20px;
-	}
-	.form-controls {
-		position: absolute;
-		left: 0;
-		bottom: 10px;
-		z-index: 401;
-	}
-	.form-controls div {
-		width: 100px;
-		height: 40px;
-		line-height: 10px;
-		background-color: deepskyblue;
-		border-right: 1px solid black;
-		float: left;
-		cursor: pointer;
-	}
-	#newButton {
-		bottom: 0;
 	}
 </style>
