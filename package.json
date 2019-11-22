@@ -45,6 +45,9 @@
       "autoprefixer": {}
     }
   },
+  "vue": {
+    "indexPath":"index.php"
+  },
   "browserslist": [
     "> 1%",
     "last 2 versions"

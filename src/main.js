@@ -8,6 +8,8 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue)
 
 import 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
 import axios from 'axios'
 Vue.prototype.$http = axios
 

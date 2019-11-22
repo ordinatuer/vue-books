@@ -1,6 +1,7 @@
 <template>
 	<g>
-		<circle class="svg-teil"
+		<circle v-bind:class="'svg-teil' + addCss"
+			v-bind:id="'teil'+teil.i"
 			v-bind:r="h/2"
 			v-bind:cx="cxy[0]" 
 			v-bind:cy="cxy[1]" 
@@ -18,17 +19,14 @@
 </template>
 
 <script >
-// v-bind:r="((1 === teil.r) ? h : l)/2"
 import Draw from '../../mixins/Draw.js'
+import TeilsMixin from '../../mixins/TeilsMixin.js'
 import SvgTeilText from '../SvgTeilText.vue'
 
 export default {
-	mounted: function() {
-		//console.log(this.teil)
-	},
 	name: 'SvgCircle',
 	props: ['teil'],
-	mixins: [Draw],
+	mixins: [Draw, TeilsMixin],
 	components: {
 		SvgTeilText
 	},

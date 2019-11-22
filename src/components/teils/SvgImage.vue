@@ -1,5 +1,6 @@
 <template>
 	<image 
+		v-bind:class="'svg-teil' + addCss"
 		v-bind:href="imgSrc + teil.image" 
 		v-bind:width="l" 
 		v-bind:height="h" 
@@ -14,18 +15,16 @@
 
 <script >
 import Draw from '../../mixins/Draw.js'
+import TeilsMixin from '../../mixins/TeilsMixin.js'
 
 export default {
 	name: 'SvgImage',
 	props: ['teil'],
-	mixins: [Draw],
+	mixins: [Draw, TeilsMixin],
 	computed: {
 		cxy: function() {
 			return this.coords(this.teil)
 		}
-	},
-	mounted: function() {
-		//console.log(this.imgSrc)
 	}
 }
 </script>

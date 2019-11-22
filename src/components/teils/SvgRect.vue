@@ -1,9 +1,12 @@
 <template>
 	<g>
-		<rect class="svg-teil"
+		<rect v-bind:class="'svg-teil' + addCss"
+			v-bind:data-point="'point ' + teil.pointFront"
+			v-bind:id="'teil'+teil.i"
 			v-bind:rx="teil.r"
 			v-bind:ry="teil.r"
-			v-bind:x="x" v-bind:y="y" 
+			v-bind:x="x"
+			v-bind:y="y" 
 			v-bind:width="h"
 			v-bind:height="l"
 			v-bind:fill="teil.fill || '#999'"
@@ -21,12 +24,14 @@
 
 <script >
 import Draw from '../../mixins/Draw.js'
+import TeilsMixin from '../../mixins/TeilsMixin.js'
 import SvgTeilText from '../SvgTeilText.vue'
+
 
 export default {
 	name: 'SvgRect',
 	props: ['teil'],
-	mixins: [Draw],
+	mixins: [Draw, TeilsMixin],
 	components: {
 		SvgTeilText
 	},
@@ -40,20 +45,6 @@ export default {
 		y: function() {
 			return this.cxy[1] - this.l/2
 		}
-
-
-		// width: function () {
-		// 	return (-1 === +this.teil.l) ? this.h : this.l
-		// },
-		// height: function() {
-		// 	return (-1 === +this.teil.h) ? this.l : this.h
-		// },
-		// x: function() {
-		// 	return this.cxy[0] - this.width/2
-		// },
-		// y: function() {
-		// 	return this.cxy[1] - this.height/2
-		// }
 	}
 }
 </script>

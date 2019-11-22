@@ -1,5 +1,6 @@
 <template>
-	<line 
+	<line
+		v-bind:id="'line'+line.line_id"
 		v-bind:x1="cxy[0]"
 		v-bind:y1="cxy[1]"
 		v-bind:x2="cxy[2]"

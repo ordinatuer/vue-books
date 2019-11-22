@@ -16,9 +16,6 @@ export default {
 		SvgRect,
 		SvgCircle,
 		SvgImage
-	},
-	mounted: function() {
-		//console.log('SvgTeil mounted ' + this.teil.type)
 	}
 }
 </script>
@@ -27,6 +24,13 @@ export default {
 .svg-teil:hover {
 	stroke: black;
 	stroke-width: 20px;
-
+}
+.point-start {
+	stroke: blue;
+    stroke-width: 50px;
+}
+.point-stop {
+	stroke: red;
+    stroke-width: 50px;
 }
 </style>

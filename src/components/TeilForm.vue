@@ -1,5 +1,5 @@
 <template>
-	<div class="form-block">
+	<div class="teil-form-block">
 		<b-button variant="outline-primary"
 			class="w100"
 			v-on:click="toggleForm" >
@@ -13,7 +13,6 @@
 				<b-form-input type="number" name="teil_id" v-bind:value="teil.teil_id" disabled></b-form-input>
 				<b-form-textarea name="text" v-model="teil.text"></b-form-textarea>
 			</b-form>
-			<!-- </form> -->
 			<b-button variant="success" class="w100"
 				v-on:click="fixTeil">
 				Save
@@ -31,18 +30,6 @@
 				<b-form-file name="imagefile" v-bind:id="newFormImage" v-on:input="imageLoad"></b-form-file>
 				<b-form-textarea name="text" v-model="newTeilData.text"></b-form-textarea>
 			</b-form>
-			<!-- <form  v-bind:id="newForm">
-				<div class="form-inputs">
-					<input type="number" name="x" v-model="newTeilData.x" /><br />
-					<input type="number" name="y" v-model="newTeilData.y" /><br />
-					<input type="radio" name="type" value="1" v-model="newTeilData.type" /><label>Rectangle</label><br/>
-					<input type="radio" name="type" value="2" v-model="newTeilData.type" /><label>Circle</label><br/>
-					<input type="radio" name="type" value="3" v-model="newTeilData.type" /><label>Image</label><br/>
-					<input type="text" name="image" v-bind:value="imageName" disabled /><br />
-					<input type="file" v-bind:id="newFormImage" name="imagefile" v-on:input="imageLoad" />
-					<textarea name="text" v-model="newTeilData.text"></textarea><br />
-				</div>
-			</form> -->
 			<b-button variant="success" class="w100"
 				v-on:click="newTeil">
 				Emit
@@ -79,17 +66,12 @@
 				imageName: null
 			}
 		},
-		mounted: function() {
-
-		},
 		methods: {
 			newTeil: function() {
 				let formData = new FormData(document.getElementById(this.newForm))
 				let imageData = document.getElementById(this.newFormImage)
 
 				formData.append('image', this.imageName)
-				//console.log(formData)
-				//window.D = formData
 
 				this.$emit('addTeil', this.newTeilData, formData)
 
@@ -122,18 +104,10 @@
 
 			},
 			imageLoad: function(e) {
-				//let name = e.target.value.split('\\').pop() || null
 				let name = e.name || null
 
 				this.imageName = name
 				this.newTeilData.image = name
-
-				console.log( name )
-			}
-		},
-		watch: {
-			teil: function() {
-				console.log(this.teil.i + ' | ' + this.teil.teil_id)
 			}
 		},
 		computed: {
@@ -145,10 +119,10 @@
 	}
 </script>
 <style >
-	.form-block {
+	.teil-form-block {
 		position: absolute;
 		top: 0px;
-		right: 50px;
+		right: 0px;
 		z-index: 401;
 	}
 	.w100 {

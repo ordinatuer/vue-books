@@ -8,11 +8,15 @@
 			<svg :id="canvasId"
 				xmlns="http://www.w3.org/2000/svg"
 				:viewBox="'0 0 ' + L + ' ' + H"
-				v-on:click="testClick"
+				v-on:click.exact="canvasClick"
+				v-on:click.ctrl="canvasCtrlClick"
 			>
 				<rect v-bind:width="L" v-bind:height="H" fill="white" x="0" y="0"></rect>
-				<SvgLine v-for="line in lines" v-bind:line="line" />
-				<SvgTeil v-for="(teil, i) in teils" v-bind:teil="numTeil(teil, i)" />
+				<SvgLine v-for="line in lines" v-bind:line="line"
+					v-if="0 < lines.length" />
+				<SvgTeil v-for="(teil, i) in teils" 
+					v-bind:teil="numTeil(teil, i)"
+					v-if="0 < teils.length" />
 			</svg>
 		</div>
 	</div>
@@ -23,7 +27,7 @@ import TeilForm from './components/TeilForm.vue'
 import SvgLine from './components/SvgLine.vue'
 import SvgTeil from './components/SvgTeil.vue'
 const qs = require('querystring')
-const apiServer = 'http://45.8.228.95'
+const apiServer = 'http://books.loc'
 
 import Draw from './mixins/Draw.js'
 
@@ -34,7 +38,9 @@ export default {
 		SvgLine,
 		SvgTeil
 	},
-	mixins:[Draw],
+	mixins:[
+		Draw
+	],
 	data: function() {
 		return {
 			mapId: 'mapId',
@@ -57,7 +63,9 @@ export default {
 			},
 			lines: [],
 			teils: [],
-			teilInForm: {}
+			teilInForm: {},
+			linePoints: [],
+			linePointsFront: []
 		}
 	},
 	mounted: function() {
@@ -67,7 +75,7 @@ export default {
 
 		this.map.fitBounds(this.bounds)
 		this.map.setMaxBounds(this.bounds)
-		this.map.setMinZoom(1)
+		this.map.setMinZoom(4)
 		this.map.setMaxZoom(7)
 
 		let canvas = document.getElementById(this.canvasId)
@@ -102,13 +110,11 @@ export default {
 					}
 				})
 				.then(response => {
-					//console.log(response)
+					
 				})
 				.catch(error => {
-					//console.log(error)
+					
 				})
-			} else {
-				//console.log('Empty - Пусто')
 			}
 		},
 		fixTeil: function(id, newData) {
@@ -125,17 +131,12 @@ export default {
 					}
 				})
 				.then(response => {
-					console.log(response)
+					
 				})
 				.catch(error => {
-					console.log(error)
+					
 				})
-			} else {
-				console.log('Empty - Пусто | fixData')
 			}
-		},
-		addNewTeil: function() {
-
 		},
 		getData: function(api) {
 			let sb = this
@@ -150,11 +151,11 @@ export default {
 				sb[api.data] = sb[api.data].concat(response.data)
 			})
 			.catch(error => {
-				//console.log(error)
+				
 			})
 		},
-		testClick: function(e) {
-			let _this = this
+		canvasClick: function(e) {
+			//let _this = this
 			let el = e.target
 
 			// api data id (teil_id)
@@ -163,19 +164,97 @@ export default {
 			// number in App.data.[lines/teils] 
 			let modelId = el.getAttribute('data-model-id')
 
-			// attribute id of svg tags
-			//let domId = el.getAttribute('id')
-
 			if ( modelId ) {
-				_this.teilInForm = _this.teils[modelId]
-
-				_this.teilInForm.modelId = modelId
-			} else {
-
+				this.teilInForm = this.teils[modelId]
+				this.teilInForm.modelId = modelId
 			}
+
+			if ( 0 !== this.linePointsFront.length) {
+				this.linePointsClear()
+				if (this.linePointsFront[0]) {
+					console.log(this.teils[this.linePointsFront[0]])
+				}
+				if (this.linePointsFront[1]) {
+					console.log(this.teils[this.linePointsFront[1]])
+				}
+			}
+		},
+		canvasCtrlClick: function(e) {
+			let apiId = e.target.getAttribute('data-api-id') || null
+
+			if ( null !== apiId ) { // click on teil-element
+				let modelId = e.target.getAttribute('data-model-id')
+
+				switch ( this.linePoints.length ) {
+					case 0:
+						this.linePoints.push(apiId)
+						this.linePointsFront.push(modelId)
+						break
+					case 1:
+						if ( this.linePoints[0] === apiId) {
+							break
+						} else {
+							this.linePoints.push(apiId)
+							this.linePointsFront.push(modelId)
+						}
+						break
+					case 2:
+						//console.log('ctrl Click 2 points on teil')
+						break
+				}
+			} else {
+				if (2 === this.linePoints.length) {
+					this.addLine()
+				}
+			}
+		},
+		addLine: function() {
+			let data = {
+				'line_from': this.linePoints[0],
+				'line_to': this.linePoints[1]
+			}
+
+			this.$http({
+				method: 'POST',
+				url: this.api.line.url,
+				data: data,
+				headers: {
+					'Content-type': 'application/json; charset=utf-8'
+				}
+			}).then(response => {
+				if (201 === response.status) {
+					this.lines.push(response.data)
+				}
+				this.linePointsClear()
+			}).catch(error => {
+				
+			})
+		},
+		linePointsClear: function() {
+			this.linePoints = []
+
+			let points = this.linePointsFront
+			if (points[0]) {
+				this.$set(this.teils[points[0]], 'pointFront', null)
+			}
+
+			if (points[1]) {
+				this.$set(this.teils[points[1]], 'pointFront', null)
+			}
+
+			this.linePointsFront = []
 		}
 	},
 	watch: {
+		linePointsFront: function(points) {
+			if (points[0]) {
+				this.$set(this.teils[points[0]], 'pointFront', 'point-start')
+			}
+
+			if (points[1]) {
+				this.$set(this.teils[points[1]], 'pointFront', 'point-stop')
+			}
+		},
 		lines: function() {
 			if ( this.api.line.load) {
 				return
@@ -189,7 +268,7 @@ export default {
 			}
 		},
 		teils: function() {
-			console.log( 'teils watch' )
+			console.log('T ch')
 			if ( this.api.teil.load ) {
 				return
 			}
@@ -204,7 +283,6 @@ export default {
 }
 </script>
 
-<style src="../node_modules/leaflet/dist/leaflet.css"></style>
 <style>
 html, body {
 	width: 100%;
