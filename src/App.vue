@@ -87,7 +87,6 @@ export default {
 				interactive: true
 			}
 		).addTo(this.map)
-
 		this.getData(this.api.line)
 	},
 	methods: {
@@ -97,9 +96,10 @@ export default {
 		},
 		addTeil: function(newData, formData) {
 			if (newData) {
-				this.teils.push(newData)
+				//this.teils.push(newData)
 
 				let data = formData
+				let _this = this
 
 				this.$http({
 					method: 'post',
@@ -110,7 +110,7 @@ export default {
 					}
 				})
 				.then(response => {
-					
+					_this.teils.push(response.data)
 				})
 				.catch(error => {
 					
@@ -168,16 +168,6 @@ export default {
 				this.teilInForm = this.teils[modelId]
 				this.teilInForm.modelId = modelId
 			}
-
-			if ( 0 !== this.linePointsFront.length) {
-				this.linePointsClear()
-				if (this.linePointsFront[0]) {
-					console.log(this.teils[this.linePointsFront[0]])
-				}
-				if (this.linePointsFront[1]) {
-					console.log(this.teils[this.linePointsFront[1]])
-				}
-			}
 		},
 		canvasCtrlClick: function(e) {
 			let apiId = e.target.getAttribute('data-api-id') || null
@@ -197,9 +187,6 @@ export default {
 							this.linePoints.push(apiId)
 							this.linePointsFront.push(modelId)
 						}
-						break
-					case 2:
-						//console.log('ctrl Click 2 points on teil')
 						break
 				}
 			} else {
@@ -268,7 +255,6 @@ export default {
 			}
 		},
 		teils: function() {
-			console.log('T ch')
 			if ( this.api.teil.load ) {
 				return
 			}

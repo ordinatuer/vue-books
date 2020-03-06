@@ -1,7 +1,7 @@
 export default {
 	data: function() {	
 		return {
-			imgSrc: 'http://joo25.loc/img/',
+			imgSrc: 'http://books.loc/img/',
 			h: 1500,
 			l: 1000,
 			nL: 65,

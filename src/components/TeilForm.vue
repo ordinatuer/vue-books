@@ -62,8 +62,8 @@
 					i: 0
 				},
 				newTeilData: {},
-				lastNewI: null,
-				imageName: null
+				//lastNewI: null,
+				imageName: ''
 			}
 		},
 		methods: {
@@ -76,8 +76,6 @@
 				this.$emit('addTeil', this.newTeilData, formData)
 
 				this.newTeilData = Object.assign({}, this.defaultTeil)
-
-				
 			},
 			fixTeil: function() {
 				let formData = new FormData(document.getElementById('teilForm'))
@@ -104,7 +102,7 @@
 
 			},
 			imageLoad: function(e) {
-				let name = e.name || null
+				let name = e.name || ''
 
 				this.imageName = name
 				this.newTeilData.image = name
