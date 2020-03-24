@@ -1,13 +1,8 @@
+import Settings from '../settings.js'
+
 export default {
-	data: function() {	
-		return {
-			imgSrc: 'http://books.loc/img/',
-			h: 1500,
-			l: 1000,
-			nL: 65,
-			nH: 30,
-			padding: 200
-		}
+	data: function() {
+		return Settings.image
 	},
 	computed: {
 		L: function() {

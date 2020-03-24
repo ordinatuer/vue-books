@@ -38,29 +38,18 @@
 	</div>
 </template>
 <script>
+	import Settings from '../settings.js'
+
 	export default {
 		name: 'TeilForm',
 		props: ['teil'],
 		data: function() {
+			console.log(Settings.teil)
 			return {
 				formStatus: false, // true - new teil; 
 				newForm: 'teilFormNew',
 				newFormImage: 'imageFile',
-				defaultTeil: {
-					x: 0,
-					y: 0,
-					l: -1,
-					h: -1,
-					type: 1,
-					size: 150,
-					r: 60,
-					fill: '#999',
-					teil_id: 0,
-					modelId: null,
-					text: 'New Teil',
-					image: null,
-					i: 0
-				},
+				defaultTeil: Settings.teil,
 				newTeilData: {},
 				//lastNewI: null,
 				imageName: ''
