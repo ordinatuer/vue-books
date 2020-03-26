@@ -27,7 +27,7 @@ import TeilForm from './components/TeilForm.vue'
 import SvgLine from './components/SvgLine.vue'
 import SvgTeil from './components/SvgTeil.vue'
 const qs = require('querystring')
-const apiServer = 'http://books.loc'
+const apiServer = 'http://0.0.0.0'
 
 import Draw from './mixins/Draw.js'
 

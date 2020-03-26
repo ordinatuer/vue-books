@@ -1,7 +1,7 @@
 export default {
 	data: function() {	
 		return {
-			imgSrc: 'http://books.loc/img/',
+			imgSrc: 'http://0.0.0.0/img/',
 			h: 1500,
 			l: 1000,
 			nL: 65,
