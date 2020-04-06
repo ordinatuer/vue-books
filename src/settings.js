@@ -1,6 +1,8 @@
+let api = 'http://books.loc'
 export default {
     image: {
-        imgSrc: 'http://books.loc/img/',
+        api: api,
+        imgSrc: api+'/img/',
         h: 1500,
         l: 1000,
         nL: 65,

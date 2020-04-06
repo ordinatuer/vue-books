@@ -44,7 +44,6 @@
 		name: 'TeilForm',
 		props: ['teil'],
 		data: function() {
-			console.log(Settings.teil)
 			return {
 				formStatus: false, // true - new teil; 
 				newForm: 'teilFormNew',
@@ -76,13 +75,9 @@
 
 				let mid = formData.get('modelId')
 
-				console.log( mid )
-				console.log( data )
-
 				this.$emit('fixTeil', mid, data)
 			},
 			toggleForm: function() {
-				console.log('New!! ')
 				if ( !this.formStatus) {
 					this.newTeilData = Object.assign({}, this.defaultTeil)
 				}

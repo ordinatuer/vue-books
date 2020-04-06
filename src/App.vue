@@ -26,11 +26,10 @@
 import TeilForm from './components/TeilForm.vue'
 import SvgLine from './components/SvgLine.vue'
 import SvgTeil from './components/SvgTeil.vue'
+import Draw from './mixins/Draw.js'
 
 const qs = require('querystring')
-const apiServer = 'http://books.loc'
-
-import Draw from './mixins/Draw.js'
+let apiServer = Draw.data()['api']
 
 export default {
 	name: 'app',
