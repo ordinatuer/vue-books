@@ -5,8 +5,8 @@ export default {
         imgSrc: api+'/img/',
         h: 1500,
         l: 1000,
-        nL: 65,
-        nH: 30,
+        nL: 46,
+        nH: 18,
         padding: 200
     },
     teil: {

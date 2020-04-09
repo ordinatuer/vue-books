@@ -75,8 +75,8 @@ export default {
 
 		this.map.fitBounds(this.bounds)
 		this.map.setMaxBounds(this.bounds)
-		this.map.setMinZoom(4)
-		this.map.setMaxZoom(7)
+		this.map.setMinZoom(2)
+		this.map.setMaxZoom(8)
 
 		let canvas = document.getElementById(this.canvasId)
 

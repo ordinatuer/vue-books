@@ -5,7 +5,7 @@
 		v-bind:y1="cxy[1]"
 		v-bind:x2="cxy[2]"
 		v-bind:y2="cxy[3]"
-		v-bind:stroke="lineStroke" stroke-width="20">
+		v-bind:stroke="lineStroke" stroke-width="100">
 			
 	</line>
 </template>
