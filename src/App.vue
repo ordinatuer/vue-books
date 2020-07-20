@@ -1,9 +1,12 @@
 <template>
 	<div id="app">
+		<div id="preloadPage" v-if="!load">
+			<span>Please wait. Loading...</span>
+		</div>
 		<div id="componentsWrap">
-			<TeilForm v-bind:teil="teilInForm"
+			<!-- <TeilForm v-bind:teil="teilInForm"
 				v-on:addTeil="addTeil"
-				v-on:fixTeil="fixTeil"/>
+				v-on:fixTeil="fixTeil"/> -->
 			<div id="mapId"></div>
 			<svg :id="canvasId"
 				xmlns="http://www.w3.org/2000/svg"
@@ -23,7 +26,7 @@
 </template>
 
 <script>
-import TeilForm from './components/TeilForm.vue'
+//import TeilForm from './components/TeilForm.vue'
 import SvgLine from './components/SvgLine.vue'
 import SvgTeil from './components/SvgTeil.vue'
 import Draw from './mixins/Draw.js'
@@ -34,7 +37,7 @@ let apiServer = Draw.data()['api']
 export default {
 	name: 'app',
 	components: {
-		TeilForm,
+		//TeilForm,
 		SvgLine,
 		SvgTeil
 	},
@@ -65,18 +68,22 @@ export default {
 			teils: [],
 			teilInForm: {},
 			linePoints: [],
-			linePointsFront: []
+			linePointsFront: [],
+			load: false
 		}
 	},
 	mounted: function() {
-		this.bounds = [[0, 0], [this.L, this.H]]
+		this.bounds = [[0, 0], [this.L*0.01, this.H*0.01]]
 		
-		this.map = L.map('mapId')
+		this.map = L.map('mapId', {
+			crs: L.CRS.Simple
+		})
 
 		this.map.fitBounds(this.bounds)
 		this.map.setMaxBounds(this.bounds)
 		this.map.setMinZoom(2)
-		this.map.setMaxZoom(8)
+		this.map.setMaxZoom(7)
+
 
 		let canvas = document.getElementById(this.canvasId)
 
@@ -88,6 +95,8 @@ export default {
 			}
 		).addTo(this.map)
 		this.getData(this.api.line)
+
+
 	},
 	methods: {
 		numTeil: function(teil, i) {
@@ -263,6 +272,8 @@ export default {
 				this.getData(this.api.teil)
 			} else {
 				this.api.line.teil = true
+
+				this.load = true
 			}
 		}
 	}
@@ -289,5 +300,21 @@ html, body {
 }
 .svg-text {
 	font-size: 150;
+}
+#preloadPage {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1010;
+	width: 100%;
+	height: 100%;
+
+	background-color: burlywood;
+
+	text-align: center;
+}
+#preloadPage > span {
+	display: block;
+	margin-top: 40%;
 }
 </style>
