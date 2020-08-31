@@ -14,7 +14,6 @@
     "core-js": "^2.6.11",
     "leaflet": "^1.6.0",
     "postcss-import": "^12.0.1",
-    "svg.js": "^2.7.1",
     "vue": "^2.6.11"
   },
   "devDependencies": {

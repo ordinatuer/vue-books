@@ -150,8 +150,14 @@ export default {
 		getData: function(api) {
 			let sb = this
 			let page = api.current
+			let authorization = 'Basic ' + btoa('admin:admin')
+			console.log(authorization)
 
-			sb.$http.get(api.url + '?page=' + api.current)
+			sb.$http.get(api.url + '?page=' + api.current, {
+				headers: {
+					'Authorization': authorization
+				}
+			})
 			.then(response => {
 				if (null === api.count) {
 					api.count = +response.request.getResponseHeader("x-pagination-page-count")
@@ -313,8 +319,14 @@ html, body {
 
 	text-align: center;
 }
+#preloadPage:before {
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+	content: "";
+}
 #preloadPage > span {
-	display: block;
-	margin-top: 40%;
+	display: inline-block;
+	vertical-align: middle;
 }
 </style>
